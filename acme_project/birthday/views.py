@@ -1,11 +1,11 @@
 # from django.shortcuts import render, get_object_or_404, redirect
 # from django.core.paginator import Paginator
-from django.views.generic import CreateView, ListView, UpdateView, DeleteView
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 
 from .forms import BirthdayForm
 from .models import Birthday
-# from .utils import calculate_birthday_countdown
+from .utils import calculate_birthday_countdown
 
 
 
@@ -14,17 +14,14 @@ class BirthdayMixin:
     success_url = reverse_lazy('birthday:list')
 
 
-class BirthdayFormMixin:
+class BirthdayCreateView(BirthdayMixin, CreateView):
     form_class = BirthdayForm
-    template_name = 'birthday/birthday.html'
 
 
-class BirthdayCreateView(BirthdayMixin, BirthdayFormMixin, CreateView):
-    pass
 
+class BirthdayUpdateView(BirthdayMixin, UpdateView):
+    form_class = BirthdayForm
 
-class BirthdayUpdateView(BirthdayMixin, BirthdayFormMixin, UpdateView):
-    pass
 
 
 class BirthdayDeleteView(BirthdayMixin, DeleteView):
@@ -34,7 +31,17 @@ class BirthdayDeleteView(BirthdayMixin, DeleteView):
 class BirthdayListView(ListView):
     model = Birthday
     ordering = 'id'
-    paginate_by = 2
+    paginate_by = 3
+
+class BirthdayDetailView(DetailView):
+    model = Birthday
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['birthday_countdown'] = calculate_birthday_countdown(
+            self.object.birthday
+        )
+        return context
 
 
 # def birthday(request, pk=None):
