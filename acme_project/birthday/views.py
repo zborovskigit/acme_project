@@ -13,7 +13,7 @@ from .utils import calculate_birthday_countdown
 class BirthdayListView(ListView):
     model = Birthday
     ordering = 'id'
-    paginate_by = 3
+    paginate_by = 5
 
 
 class BirthdayCreateView(CreateView):
